@@ -2,11 +2,11 @@
 
 make vue template ast.
 
-    import vueAstRun from '@vue-ast'
+    import vueAstRun from 'vue-ast'
     let obj = vueAstRun(strings)
 example.
 
-    import vueAstRun from '@vue-ast'
+    import vueAstRun from 'vue-ast'
     let strings = '<template>
     <div id="app">
         <div id="nav">
