@@ -1,0 +1,22 @@
+{
+  "name": "vue-ast",
+  "version": "0.0.1",
+  "description": "vueDomをast化する",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imamiya-masaki/vue-ast-js.git"
+  },
+  "keywords": [
+    "vue"
+  ],
+  "author": "imamiya-masaki <imamiyagit@gmail.com> (https://github.com/imamiya-masaki)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imamiya-masaki/vue-ast-js/issues"
+  },
+  "homepage": "https://github.com/imamiya-masaki/vue-ast-js#readme"
+}
