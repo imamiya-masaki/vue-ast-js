@@ -1,6 +1,6 @@
 {
   "name": "vue-ast",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "vueDomをast化する",
   "main": "index.js",
   "scripts": {
@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/imamiya-masaki/vue-ast-js/issues"
   },
-  "homepage": "https://github.com/imamiya-masaki/vue-ast-js#readme"
+  "homepage": "https://github.com/imamiya-masaki/vue-ast-js#readme",
+  "dependencies": {
+    "vue-ast": "^0.0.2"
+  }
 }
