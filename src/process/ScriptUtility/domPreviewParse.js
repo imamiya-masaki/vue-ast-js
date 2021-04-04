@@ -292,7 +292,7 @@ function domPreviewParse (domTree, fileName) {
             toParam = parseDom[':to']
           }
           if (Object.keys(parseDom).indexOf('to') >= 0) {
-            toParam = parseDom['to']
+            toParam = parseDom.to
           }
           if (Object.keys(toParam).length == 0) {
             continue

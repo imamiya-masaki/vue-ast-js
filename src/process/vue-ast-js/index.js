@@ -8,12 +8,12 @@ export default function (text) {
   let unique = 0 // 各々のタグにuniqueIdを付与する
   let parentId = null
   let depth = 0
-  let lines = 0
+  let line = 0
   console.log('text', text)
   for (let i = 0; i < text.length; i++) {
     const mozi = text.charAt(i)
     if (mozi.match(/\r?\n/g)) {
-      lines++
+      line++
     }
     if (mozi === '<') {
       const slice = []
@@ -24,7 +24,7 @@ export default function (text) {
         }
       }
       const str = slice.join('')
-      const info = DOMAnalysis(str)
+      const info = DOMAnalysis(str, line)
       if (info.name && info.name.length > 0) {
         tags[unique] = info
         if (!unique || !info) {
@@ -91,12 +91,13 @@ export default function (text) {
       unique++
     }
   }
+  console.log('pre', depths)
   const tree = createDomTree(depths)
 
   return tree
 }
 
-function DOMAnalysis (dom) {
+function DOMAnalysis (dom, line) {
   //
   const info = {}
   info.open = true // 閉じられているか
@@ -137,13 +138,16 @@ function DOMAnalysis (dom) {
     // let blanckCount = []
     //
     const candidateOthers = []
-    if (tags[tags.length - 1].substr(tags[tags.length - 1].length - 1, 1) === '>') {
+    console.log('last', tags[tags.length - 1].substr(tags[tags.length - 1].length - 1, 1), info.name)
+    if (tags[tags.length - 1].substr(tags[tags.length - 1].length - 2, 2) === '/>') {
+      // 2021/04/05 こっちの方が条件厳しいんだしこっちの方がうえじゃね...?
+      tags[tags.length - 1] = tags[tags.length - 1].split('/>')[0]
+      info.open = false
+      info.close = false
+      // tags.push('/>')
+    } else if (tags[tags.length - 1].substr(tags[tags.length - 1].length - 1, 1) === '>') {
       tags[tags.length - 1] = tags[tags.length - 1].split('>')[0]
       // tags.push('>')
-    } else if (tags[tags.length - 1].substr(tags[tags.length - 1].length - 2, 2) === '/>') {
-      tags[tags.length - 1] = tags[tags.length - 1].split('/>')[0]
-      info.close = true
-      // tags.push('/>')
     }
     let tagslength = tags.length
     for (let i = 1; i < tagslength; i++) {
@@ -236,7 +240,7 @@ function DOMAnalysis (dom) {
       info.key = otherInfo
     }
   }
-  //
+  info.line = line 
   return info
 }
 
@@ -349,6 +353,9 @@ function createDomTree (depths) {
         // }
         depths[i - 1][seed.parentId].children.push(seed)
       } else {
+      }
+      if (seed.close) {
+        console.log('kore is nani?', seed, depths[i - 1])
       }
     }
   }
