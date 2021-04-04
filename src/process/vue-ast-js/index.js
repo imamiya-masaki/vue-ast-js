@@ -8,8 +8,13 @@ export default function (text) {
   let unique = 0 // 各々のタグにuniqueIdを付与する
   let parentId = null
   let depth = 0
+  let lines = 0
+  console.log('text', text)
   for (let i = 0; i < text.length; i++) {
     const mozi = text.charAt(i)
+    if (mozi.match(/\r?\n/g)) {
+      lines++
+    }
     if (mozi === '<') {
       const slice = []
       for (; ; i++) {

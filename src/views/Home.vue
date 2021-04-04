@@ -7,8 +7,8 @@
 
 <script>
 // @ is an alias to /src
-// import perseFunc from '@/process/vue-ast-js/index'
-import perseFunc from 'vue-ast'
+import perseFunc from '@/process/vue-ast-js/index'
+// import perseFunc from 'vue-ast'
 export default {
   name: 'Home',
   components: {
@@ -25,6 +25,7 @@ export default {
       // const get = exec.rawRun(this.text)
       const str2 = JSON.stringify(get, null, 2)
       console.log('get', str2, typeof get)
+      console.log('get:object', get)
     }
   }
 }
