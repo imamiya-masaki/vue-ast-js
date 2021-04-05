@@ -13,6 +13,7 @@ export default function (text) {
     const mozi = text.charAt(i)
     if (mozi.match(/\r?\n/g)) {
       line++
+      continue
     }
     if (mozi === '<') {
       const slice = []
@@ -66,6 +67,9 @@ export default function (text) {
       const slice = []
       for (; ; i++) {
         slice.push(text.charAt(i))
+        if (text.charAt(i).match(/\r?\n/g)) {
+          line++
+        }
         if (i + 1 === text.length || text.charAt(i + 1) === '<') {
           break
         }
