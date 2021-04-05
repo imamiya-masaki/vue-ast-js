@@ -1,6 +1,6 @@
 {
   "name": "vue-ast",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "vueDomをast化する",
   "main": "index.js",
   "scripts": {
