@@ -9,7 +9,6 @@ export default function (text) {
   let parentId = null
   let depth = 0
   let line = 0
-  console.log('text', text)
   for (let i = 0; i < text.length; i++) {
     const mozi = text.charAt(i)
     if (mozi.match(/\r?\n/g)) {
@@ -84,6 +83,7 @@ export default function (text) {
       tags[unique].unique = unique
       tags[unique].depth = depth
       tags[unique].name = 'reserveText'
+      tags[unique].string = true
       if (!depths[tags[unique].depth]) {
         depths[tags[unique].depth] = {}
       }
@@ -91,7 +91,6 @@ export default function (text) {
       unique++
     }
   }
-  console.log('pre', depths)
   const tree = createDomTree(depths)
 
   return tree
@@ -138,7 +137,6 @@ function DOMAnalysis (dom, line) {
     // let blanckCount = []
     //
     const candidateOthers = []
-    console.log('last', tags[tags.length - 1].substr(tags[tags.length - 1].length - 1, 1), info.name)
     if (tags[tags.length - 1].substr(tags[tags.length - 1].length - 2, 2) === '/>') {
       // 2021/04/05 こっちの方が条件厳しいんだしこっちの方がうえじゃね...?
       tags[tags.length - 1] = tags[tags.length - 1].split('/>')[0]
@@ -240,7 +238,7 @@ function DOMAnalysis (dom, line) {
       info.key = otherInfo
     }
   }
-  info.line = line 
+  info.startLine = line 
   return info
 }
 
@@ -343,7 +341,13 @@ function otherAnalysis (other) {
 function createDomTree (depths) {
   const length = Object.keys(depths).length - 1
   for (let i = length; i > 0; i--) {
-    for (const seed of Object.values(depths[i])) {
+    const depthKeys = Object.keys(depths[i])
+    for (let j = 0; j < depthKeys.length; j++) {
+      const key = depthKeys[j]
+      let seed = depths[i][key]
+      if (seed.close && j > 0) {
+        depths[i][depthKeys[j - 1]].endLine = seed.startLine
+      }
       if (!seed.close && seed.parentId >= 0) {
         if (!depths[i - 1][seed.parentId].children) {
           depths[i - 1][seed.parentId].children = []
@@ -354,16 +358,22 @@ function createDomTree (depths) {
         depths[i - 1][seed.parentId].children.push(seed)
       } else {
       }
-      if (seed.close) {
-        console.log('kore is nani?', seed, depths[i - 1])
-      }
     }
   }
-  for (const seed of Object.values(depths[0])) {
-    if (!seed.close) {
-      return seed
+  const depthKeys = Object.keys(depths[0]) 
+  for (let i = 0; i < depthKeys.length; i++) {
+    const key = depthKeys[i]
+    const seed = depths[0][key]
+    if (seed.close) {
+      depths[0][depthKeys[i - 1]].endLine = seed.startLine
     }
   }
+  // for (const seed of Object.values(depths[0])) {
+  //   if (!seed.close) {
+  //     return seed
+  //   }
+  // }
+  return depths[0][0]
 }
 function textAnalysis (text) {
   // 配列で受け取る?
