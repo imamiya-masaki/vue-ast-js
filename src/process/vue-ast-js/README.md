@@ -192,4 +192,23 @@ example.
     ]
     */
     console.log(typeof obj) //object
+
+#beta version
+
+These features are not backward compatible and are subject to change without advice.
+
+It has the start and end of the dom line as information
+
+ex:
+    {
+    children: [{…}],
+    close: false,
+    depth: 2,
+    ...
+    startLine: {start: 2, end: 5},
+    endLine: {start: 7, end: 7}
+    }
+
+
+
 If you have any bugs or requests, please contact ushttps://github.com/imamiya-masaki/vue-ast-js

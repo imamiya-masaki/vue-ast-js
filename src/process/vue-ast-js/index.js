@@ -11,20 +11,30 @@ export default function (text) {
   let line = 0
   for (let i = 0; i < text.length; i++) {
     const mozi = text.charAt(i)
+    let startDom = 0
+    let endDom = 0
     if (mozi.match(/\r?\n/g)) {
       line++
       continue
     }
     if (mozi === '<') {
+      startDom = line
       const slice = []
       for (; ; i++) {
         slice.push(text.charAt(i))
+        if (text.charAt(i).match(/\r?\n/)) {
+          line++
+        }
         if (text.charAt(i) === '>') {
           break
         }
       }
+      endDom = line
       const str = slice.join('')
-      const info = DOMAnalysis(str, line)
+      let lines = {}
+      lines.start = startDom
+      lines.end = endDom
+      const info = DOMAnalysis(str, lines)
       if (info.name && info.name.length > 0) {
         tags[unique] = info
         if (!unique || !info) {
