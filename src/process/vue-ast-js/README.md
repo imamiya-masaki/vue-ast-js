@@ -193,8 +193,8 @@ example.
     */
     console.log(typeof obj) //object
 
-#beta version
-
+#beta function
+(version 0.1.0 ~)
 These features are not backward compatible and are subject to change without advice.
 
 It has the start and end of the dom line as information
