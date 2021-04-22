@@ -29,3 +29,4 @@ let endAbridCanTag = {
   thread: true,
   tfoot: true
 }
+export default {endAbridMustTag: endAbridMustTag, endAbridCanTag: endAbridCanTag}

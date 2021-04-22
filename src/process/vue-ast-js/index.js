@@ -1,3 +1,5 @@
+import SpecialTag from './SpecialTag.js';
+
 export default function (text) {
   const tags = []
   const tagCount = {} // そのタグが開かれている時true
@@ -9,6 +11,12 @@ export default function (text) {
   let parentId = null
   let depth = 0
   let line = 0
+  const isEndNoneTag = function (dom, SpecialTag) {
+    if (SpecialTag.endAbridMustTag.hasOwnProperty(dom.name)) {
+      return true
+    }
+    return false
+  }
   for (let i = 0; i < text.length; i++) {
     const mozi = text.charAt(i)
     let startDom = 0
@@ -49,7 +57,7 @@ export default function (text) {
         if (parentId) {
           domTree[tags[unique].name] = {}
         }
-        if (info.open && !info.close) {
+        if (info.open && !info.close && !isEndNoneTag(info, SpecialTag)) {
           if (!tagCount[info.name]) {
             tagCount[info.name] = 0
           }

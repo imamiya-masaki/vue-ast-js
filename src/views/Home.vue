@@ -22,6 +22,7 @@ export default {
     onClick: function () {  
       // let exec = require('exec-engine-js')
       const text = `<div class="CodeView" v-if="isCode">
+      <img class="aa">
     <b-tabs>
      <b-tab 
       :disabled="!template"
@@ -34,7 +35,7 @@ export default {
       </b-tab>
     </b-tabs>
   </div>`
-      const get = perseFunc(this.text)
+      const get = perseFunc(text)
       // const get = exec.rawRun(this.text)
       const str2 = JSON.stringify(get, null, 2)
       // console.log('get', str2, typeof get)
