@@ -23,6 +23,7 @@ export default {
       // let exec = require('exec-engine-js')
       const text = `<div class="CodeView" v-if="isCode">
       <img class="aa">
+      <tiger class="aa" />
     <b-tabs>
      <b-tab 
       :disabled="!template"

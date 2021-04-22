@@ -1,4 +1,4 @@
-let endAbridMustTag = {
+let endOmitMustTag = {
   br: true,
   img: true,
   hr: true,
@@ -15,18 +15,9 @@ let endAbridMustTag = {
 }
 
 let endAbridCanTag = {
-  li: true,
-  dt: true,
-  dd: true,
-  p: true,
-  tr: true,
-  td: true,
-  th: true,
-  rt: true,
-  rp: true,
-  optgroup: true,
-  option: true,
-  thread: true,
-  tfoot: true
+  // 直後に要素が続く場合、省略になるものをオブジェクト型で持つ
+  // ex:</li> は直後に li 要素が続くか、親要素にそれ以上内容がなければ省略できる
+  li: function (name, parentValue) {
+  }
 }
-export default {endAbridMustTag: endAbridMustTag, endAbridCanTag: endAbridCanTag}
+export default {endOmitMustTag: endOmitMustTag, endAbridCanTag: endAbridCanTag}

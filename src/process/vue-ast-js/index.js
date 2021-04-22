@@ -9,10 +9,11 @@ export default function (text) {
   // const err = []
   let unique = 0 // 各々のタグにuniqueIdを付与する
   let parentId = null
+  let preTag = ''
   let depth = 0
   let line = 0
   const isEndNoneTag = function (dom, SpecialTag) {
-    if (SpecialTag.endAbridMustTag.hasOwnProperty(dom.name)) {
+    if (SpecialTag.endOmitMustTag.hasOwnProperty(dom.name)) {
       return true
     }
     return false
@@ -42,13 +43,16 @@ export default function (text) {
       let lines = {}
       lines.start = startDom
       lines.end = endDom
-      const info = DOMAnalysis(str, lines)
+      let info = DOMAnalysis(str, lines)
+      if (isEndNoneTag(info, SpecialTag)) {
+        // 省略タグの場合
+        info.open = false
+        console.log('isEndNoneTag', {...tags}, domTree, tagCount)
+      }
       if (info.name && info.name.length > 0) {
         tags[unique] = info
         if (!unique || !info) {
-
         }
-
         if (parentId || parentId === 0) {
           tags[unique].parentId = parentId
         }
@@ -57,7 +61,7 @@ export default function (text) {
         if (parentId) {
           domTree[tags[unique].name] = {}
         }
-        if (info.open && !info.close && !isEndNoneTag(info, SpecialTag)) {
+        if (info.open && !info.close) {
           if (!tagCount[info.name]) {
             tagCount[info.name] = 0
           }
