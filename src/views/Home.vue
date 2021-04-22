@@ -34,7 +34,7 @@ export default {
       </b-tab>
     </b-tabs>
   </div>`
-      const get = perseFunc(text)
+      const get = perseFunc(this.text)
       // const get = exec.rawRun(this.text)
       const str2 = JSON.stringify(get, null, 2)
       // console.log('get', str2, typeof get)
