@@ -9,7 +9,8 @@ export default function (text) {
   // const err = []
   let unique = 0 // 各々のタグにuniqueIdを付与する
   let parentId = null
-  let preTag = ''
+  let preDom = null
+  let preLine = -1 // 前回のdomのlineを記憶する
   let depth = 0
   let line = 0
   const isEndNoneTag = function (dom, SpecialTag) {
