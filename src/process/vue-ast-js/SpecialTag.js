@@ -71,7 +71,16 @@ let omitTagPropertys = {
     pre: 1,
     section: 1,
     table: 1,
-    ul: 1}
+    ul: 1},
+  tr: {tr: 1},
+  td: {td: 1, th: 1},
+  th: {td: 1, th: 1},
+  rt: {rt: 1, rp: 1},
+  rp: {rt: 1, rp: 1},
+  optgroup: {optgroup: 1},
+  option: {option: 1, optgroup: 1},
+  thread: {tbody: 1, tfoot: 1},
+  tfoot: {}
 }
 
 let endOmitCanTag = {
