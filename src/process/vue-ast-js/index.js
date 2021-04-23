@@ -19,6 +19,16 @@ export default function (text) {
     }
     return false
   }
+  const isEndOmitTag = function (dom, parentDom, preDom, SpecialTag) {
+    if (!preDom) {
+      return false
+    }
+    const preDomName = preDom.name
+    if (SpecialTag.endOmitCanTag.hasOwnProperty(preDomName) && SpecialTag.endOmitCanTag[preDomName](dom, parentDom)) {
+      return true
+    }
+    return false
+  }
   for (let i = 0; i < text.length; i++) {
     const mozi = text.charAt(i)
     let startDom = 0
@@ -44,47 +54,58 @@ export default function (text) {
       let lines = {}
       lines.start = startDom
       lines.end = endDom
-      let info = DOMAnalysis(str, lines)
-      if (isEndNoneTag(info, SpecialTag)) {
-        // 省略タグの場合
-        info.open = false
-        console.log('isEndNoneTag', {...tags}, domTree, tagCount)
+      let infos = []
+      let targetInfo = DOMAnalysis(str, lines)
+      infos.push(targetInfo)
+      if (isEndNoneTag(targetInfo, SpecialTag)) {
+        // endタグがない場合
+        targetInfo.open = false
       }
-      if (info.name && info.name.length > 0) {
-        tags[unique] = info
-        if (!unique || !info) {
-        }
-        if (parentId || parentId === 0) {
-          tags[unique].parentId = parentId
-        }
-        tags[unique].unique = unique
-        tags[unique].depth = depth
-        if (parentId) {
-          domTree[tags[unique].name] = {}
-        }
-        if (info.open && !info.close) {
-          if (!tagCount[info.name]) {
-            tagCount[info.name] = 0
+      let parent = tags[parentId] || null
+      if (isEndOmitTag(targetInfo, parent, preDom, SpecialTag)) {
+        let omitDomStr = `</${preDom.name}>`
+        console.log('omidDom', omitDomStr)
+        infos.unshift(DOMAnalysis(omitDomStr, preDom.startLine))
+      }
+      console.log('dom', infos, infos)
+      for (let info of infos) {
+        if (info.name && info.name.length > 0) {
+          tags[unique] = info
+          if (!unique || !info) {
           }
-          tagCount[info.name]++
-          depth++
-          parentId = unique // 今代入したもの(++してないもの)を親とする
-        }
-        if (info.close) {
-          tagCount[info.name]--
-          tags[unique].depth--
-          depth--
-          if (!tags[parentId]) {
-            console.error('maybe is not openTag')
-            return
+          if (parentId || parentId === 0) {
+            tags[unique].parentId = parentId
           }
-          parentId = tags[parentId].parentId
+          tags[unique].unique = unique
+          tags[unique].depth = depth
+          if (parentId) {
+            domTree[tags[unique].name] = {}
+          }
+          if (info.open && !info.close) {
+            if (!tagCount[info.name]) {
+              tagCount[info.name] = 0
+            }
+            tagCount[info.name]++
+            depth++
+            parentId = unique // 今代入したもの(++してないもの)を親とする
+          }
+          if (info.close) {
+            tagCount[info.name]--
+            tags[unique].depth--
+            depth--
+            if (!tags[parentId]) {
+              console.error('maybe is not openTag', tags[parentId], { ...info}, parentId, tags)
+              return
+            }
+            parentId = tags[parentId].parentId
+          }
+          preDom = { ...info }
+          if (!depths[tags[unique].depth]) {
+            depths[tags[unique].depth] = {}
+          }
+          depths[tags[unique].depth][unique] = tags[unique]
+          unique++
         }
-        if (!depths[tags[unique].depth]) {
-          depths[tags[unique].depth] = {}
-        }
-        depths[tags[unique].depth][unique] = tags[unique]
-        unique++
       }
     } else {
       const slice = []

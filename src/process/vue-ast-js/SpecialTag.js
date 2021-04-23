@@ -31,6 +31,10 @@ let isNoneParentValue = function (simpleTarget, simpleParentTarget, parentNotOmi
     // 親要素が ... 以外での部分
     return false
   }
+  if (!simpleParentTarget) {
+    // parentがnullの場合、とりあえずfalseにしとく
+    return false
+  }
   if (targetName === parentName && !simpleParentTarget.close && simpleParentTarget.open && simpleTarget.close) {
     return true
   }

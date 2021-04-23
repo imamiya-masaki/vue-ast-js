@@ -2,6 +2,9 @@
   <div class="home">
     <textarea v-model="text" class="textSize"/>
     <button @click="onClick()">実行</button>
+    <pre>
+      {{ tsText}}
+    </pre>
   </div>
 </template>
 
@@ -15,13 +18,19 @@ export default {
   },
   data() {
     return {
-      text: ''
+      text: '',
+      tsText: ''
     }
   },
   methods: {
     onClick: function () {  
       // let exec = require('exec-engine-js')
       const text = `<div class="CodeView" v-if="isCode">
+      <div>
+      <li>aaaa
+      <li>ccc
+      <li>cdcd</li>
+      </div>
       <img class="aa">
       <tiger class="aa" />
     <b-tabs>
@@ -36,6 +45,7 @@ export default {
       </b-tab>
     </b-tabs>
   </div>`
+      this.tsText = text
       const get = perseFunc(text)
       // const get = exec.rawRun(this.text)
       const str2 = JSON.stringify(get, null, 2)
