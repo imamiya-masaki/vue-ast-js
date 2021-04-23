@@ -83,43 +83,70 @@ let omitTagPropertys = {
   tfoot: {}
 }
 
+const genericOmitTagFunc = function (tagName, simpleTarget, simpleParentTarget, parentRule, parentNotOmitNames) {
+  const targetName = simpleTarget.name
+  if (omitTagPropertys[tagName].hasOwnProperty(targetName)) {
+    return true
+  }
+  if (parentRule && isNoneParentValue(simpleTarget, simpleParentTarget, parentNotOmitNames)) {
+    // parentRuleがある時に、
+    // 親要素にそれ以上内容がなければ省略できるの条件を付加される
+    return true
+  }
+  return false
+}
+
 let endOmitCanTag = {
   // 直後に要素が続く場合、省略になるものをオブジェクト型で持つ
   // ex:</li> は直後に li 要素が続くか、親要素にそれ以上内容がなければ省略できる
-  // 省略させる条件が複雑になる可能性もあると思うので、あえて共通funcに見えても、無理やり共通化させないとく。
+  // 省略させる条件が複雑になる可能性もあると思うので、このfuncの利用者目線からはtagnameから実行させる
   li: function (simpleTarget, simpleParentTarget) {
-    const targetName = simpleTarget.name
-    let omitTag = {
-      li: true
+    return genericOmitTagFunc('li', simpleTarget, simpleParentTarget, true, {})
+  },
+  dt: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('dt', simpleTarget, simpleParentTarget, false, {})
+  },
+  dd: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('dd', simpleTarget, simpleParentTarget, true, {})
+  },
+  p: function (simpleTarget, simpleParentTarget) {
+    let parentNotOmitNames = {
+      a: 1,
+      audio: 1,
+      del: 1,
+      ins: 1,
+      map: 1,
+      noscript: 1,
+      video: 1
     }
-    if (omitTag.hasOwnProperty(targetName) && isNoneParentValue(simpleTarget, simpleParentTarget)) {
-      return true
-    }
-    return false
+    return genericOmitTagFunc('p', simpleTarget, simpleParentTarget, true, parentNotOmitNames)
   },
-  dt: function () {
+  tr: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('tr', simpleTarget, simpleParentTarget, true, {})
   },
-  dd: function () {
+  td: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('td', simpleTarget, simpleParentTarget, true, {})
   },
-  p: function () {
+  th: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('th', simpleTarget, simpleParentTarget, true, {})
   },
-  tr: function () {
+  rt: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('rt', simpleTarget, simpleParentTarget, true, {})
   },
-  td: function () {
+  rp: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('rp', simpleTarget, simpleParentTarget, true, {})
   },
-  th: function () {
+  optgroup: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('optgroup', simpleTarget, simpleParentTarget, true, {})
   },
-  rt: function () {
+  option: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('option', simpleTarget, simpleParentTarget, true, {})
   },
-  rp: function () {
+  thread: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('thread', simpleTarget, simpleParentTarget, false, {})
   },
-  optgroup: function () {
-  },
-  option: function () {
-  },
-  thread: function () {
-  },
-  tfoot: function () {
+  tfoot: function (simpleTarget, simpleParentTarget) {
+    return genericOmitTagFunc('tfoot', simpleTarget, simpleParentTarget, false, {})
   }
 }
 export default {endOmitMustTag: endOmitMustTag, endOmitCanTag: endOmitCanTag}
