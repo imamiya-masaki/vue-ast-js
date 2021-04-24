@@ -29,7 +29,8 @@ export default {
       <div>
       <li>aaaa
       <li>ccc
-      <li>cdcd</li>
+      <li>cdcd
+      </li>
       </div>
       <img class="aa">
       <tiger class="aa" />

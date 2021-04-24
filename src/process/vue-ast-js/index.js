@@ -20,7 +20,12 @@ export default function (text) {
     return false
   }
   const isEndOmitTag = function (dom, parentDom, preDom, SpecialTag) {
-    if (!preDom) {
+    if (!preDom || !preDom.open) {
+      // <omitTag>がopenでなければ、省く必要がない -> 挿入できない
+      return false
+    }
+    if (dom.name === preDom.name && dom.close) {
+      // 挿入する予定の閉じタグだった場合処理は無視
       return false
     }
     const preDomName = preDom.name
@@ -64,10 +69,8 @@ export default function (text) {
       let parent = tags[parentId] || null
       if (isEndOmitTag(targetInfo, parent, preDom, SpecialTag)) {
         let omitDomStr = `</${preDom.name}>`
-        console.log('omidDom', omitDomStr)
         infos.unshift(DOMAnalysis(omitDomStr, preDom.startLine))
       }
-      console.log('dom', infos, infos)
       for (let info of infos) {
         if (info.name && info.name.length > 0) {
           tags[unique] = info
@@ -94,7 +97,7 @@ export default function (text) {
             tags[unique].depth--
             depth--
             if (!tags[parentId]) {
-              console.error('maybe is not openTag', tags[parentId], { ...info}, parentId, tags)
+              console.error('maybe is not openTag')
               return
             }
             parentId = tags[parentId].parentId
@@ -285,6 +288,9 @@ function DOMAnalysis (dom, line) {
     if (otherInfo.hasOwnProperty('key')) {
       info.key = otherInfo
     }
+  }
+  if (info.close) {
+    info.open = false
   }
   info.startLine = line 
   return info
