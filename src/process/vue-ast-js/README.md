@@ -200,6 +200,7 @@ These features are not backward compatible and are subject to change without adv
 It has the start and end of the dom line as information
 
 ex:
+
     {
     children: [{…}],
     close: false,
