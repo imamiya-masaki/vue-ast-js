@@ -1,3 +1,5 @@
+import SpecialTag from './SpecialTag.js';
+
 export default function (text) {
   const tags = []
   const tagCount = {} // そのタグが開かれている時true
@@ -7,8 +9,31 @@ export default function (text) {
   // const err = []
   let unique = 0 // 各々のタグにuniqueIdを付与する
   let parentId = null
+  let preDom = null
+  let preLine = -1 // 前回のdomのlineを記憶する
   let depth = 0
   let line = 0
+  const isEndNoneTag = function (dom, SpecialTag) {
+    if (SpecialTag.endOmitMustTag.hasOwnProperty(dom.name)) {
+      return true
+    }
+    return false
+  }
+  const isEndOmitTag = function (dom, parentDom, preDom, SpecialTag) {
+    if (!preDom || !preDom.open) {
+      // <omitTag>がopenでなければ、省く必要がない -> 挿入できない
+      return false
+    }
+    if (dom.name === preDom.name && dom.close) {
+      // 挿入する予定の閉じタグだった場合処理は無視
+      return false
+    }
+    const preDomName = preDom.name
+    if (SpecialTag.endOmitCanTag.hasOwnProperty(preDomName) && SpecialTag.endOmitCanTag[preDomName](dom, parentDom)) {
+      return true
+    }
+    return false
+  }
   for (let i = 0; i < text.length; i++) {
     const mozi = text.charAt(i)
     let startDom = 0
@@ -34,44 +59,56 @@ export default function (text) {
       let lines = {}
       lines.start = startDom
       lines.end = endDom
-      const info = DOMAnalysis(str, lines)
-      if (info.name && info.name.length > 0) {
-        tags[unique] = info
-        if (!unique || !info) {
-
-        }
-
-        if (parentId || parentId === 0) {
-          tags[unique].parentId = parentId
-        }
-        tags[unique].unique = unique
-        tags[unique].depth = depth
-        if (parentId) {
-          domTree[tags[unique].name] = {}
-        }
-        if (info.open && !info.close) {
-          if (!tagCount[info.name]) {
-            tagCount[info.name] = 0
+      let infos = []
+      let targetInfo = DOMAnalysis(str, lines)
+      infos.push(targetInfo)
+      if (isEndNoneTag(targetInfo, SpecialTag)) {
+        // endタグがない場合
+        targetInfo.open = false
+      }
+      let parent = tags[parentId] || null
+      if (isEndOmitTag(targetInfo, parent, preDom, SpecialTag)) {
+        let omitDomStr = `</${preDom.name}>`
+        infos.unshift(DOMAnalysis(omitDomStr, preDom.startLine))
+      }
+      for (let info of infos) {
+        if (info.name && info.name.length > 0) {
+          tags[unique] = info
+          if (!unique || !info) {
           }
-          tagCount[info.name]++
-          depth++
-          parentId = unique // 今代入したもの(++してないもの)を親とする
-        }
-        if (info.close) {
-          tagCount[info.name]--
-          tags[unique].depth--
-          depth--
-          if (!tags[parentId]) {
-            console.error('maybe is not openTag')
-            return
+          if (parentId || parentId === 0) {
+            tags[unique].parentId = parentId
           }
-          parentId = tags[parentId].parentId
+          tags[unique].unique = unique
+          tags[unique].depth = depth
+          if (parentId) {
+            domTree[tags[unique].name] = {}
+          }
+          if (info.open && !info.close) {
+            if (!tagCount[info.name]) {
+              tagCount[info.name] = 0
+            }
+            tagCount[info.name]++
+            depth++
+            parentId = unique // 今代入したもの(++してないもの)を親とする
+          }
+          if (info.close) {
+            tagCount[info.name]--
+            tags[unique].depth--
+            depth--
+            if (!tags[parentId]) {
+              console.error('maybe is not openTag')
+              return
+            }
+            parentId = tags[parentId].parentId
+          }
+          preDom = { ...info }
+          if (!depths[tags[unique].depth]) {
+            depths[tags[unique].depth] = {}
+          }
+          depths[tags[unique].depth][unique] = tags[unique]
+          unique++
         }
-        if (!depths[tags[unique].depth]) {
-          depths[tags[unique].depth] = {}
-        }
-        depths[tags[unique].depth][unique] = tags[unique]
-        unique++
       }
     } else {
       const slice = []
@@ -251,6 +288,9 @@ function DOMAnalysis (dom, line) {
     if (otherInfo.hasOwnProperty('key')) {
       info.key = otherInfo
     }
+  }
+  if (info.close) {
+    info.open = false
   }
   info.startLine = line 
   return info
